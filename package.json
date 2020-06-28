@@ -1,0 +1,31 @@
+{
+  "name": "chesstool",
+  "version": "1.0.0",
+  "description": "Tool assisted chess gameplay on chess.com, lichess, and chess24",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HypePhilosophy/chesstool.git"
+  },
+  "keywords": [
+    "chess",
+    "engine",
+    "chess",
+    "tool",
+    "cheat",
+    "chess",
+    "cheat"
+  ],
+  "author": "HypePhilosophy + Brandon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HypePhilosophy/chesstool/issues"
+  },
+  "homepage": "https://github.com/HypePhilosophy/chesstool#readme",
+  "dependencies": {
+    "stockfish": "^10.0.2"
+  }
+}
