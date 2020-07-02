@@ -9,9 +9,11 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, session } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { ElectronBlocker } from '@cliqz/adblocker-electron';
+import fetch from 'cross-fetch'; // required 'fetch'
 import MenuBuilder from './menu';
 
 export default class AppUpdater {
@@ -23,6 +25,15 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+ElectronBlocker.fromPrebuiltAdsAndTracking(fetch)
+  // eslint-disable-next-line promise/always-return
+  .then((blocker) => {
+    blocker.enableBlockingInSession(session.defaultSession);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -58,19 +69,17 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
-    webPreferences:
-      (process.env.NODE_ENV === 'development' ||
-        process.env.E2E_BUILD === 'true') &&
-      process.env.ERB_SECURE !== 'true'
-        ? {
-            nodeIntegration: true,
-          }
-        : {
-            preload: path.join(__dirname, 'dist/renderer.prod.js'),
-          },
+    webPreferences: {
+      webSecurity: true,
+      nodeIntegration: true,
+      allowRunningInsecureContent: true,
+      devTools: true,
+    },
   });
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+  mainWindow.webContents.openDevTools();
+
+  mainWindow.loadURL(`https://chess.com/live`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
