@@ -319,7 +319,9 @@
       "bliss"
     ]
   },
-    "husky":{
-      "hooks":{ "pre-commit": "npx lint-staged"}
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged"
+    }
   }
 }
