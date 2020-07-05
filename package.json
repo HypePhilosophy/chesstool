@@ -299,7 +299,8 @@
           ".prettierrc",
           ".babelrc",
           ".eslintrc",
-          ".stylelintrc"
+          ".stylelintrc",
+          "*"
         ],
         "options": {
           "parser": "json"

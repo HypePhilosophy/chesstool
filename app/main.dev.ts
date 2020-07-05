@@ -8,6 +8,7 @@
  * When running `yarn build` or `yarn build-main`, this file is compiled to
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
+// eslint-disable-next-line prettier/prettier
 import path from 'path';
 import { app, BrowserWindow, session } from 'electron';
 import { autoUpdater } from 'electron-updater';
