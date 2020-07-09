@@ -18,6 +18,7 @@ import { ElectronBlocker } from '@cliqz/adblocker-electron';
 import fetch from 'cross-fetch'; // required 'fetch'
 import MenuBuilder from './menu';
 
+const express = require('express');
 
 export default class AppUpdater {
   constructor() {
@@ -76,8 +77,8 @@ const createWindow = async () => {
     transparent: false,
     webPreferences: {
       webSecurity: true,
-      nodeIntegration: true,
-      allowRunningInsecureContent: true,
+      nodeIntegration: false,
+      // allowRunningInsecureContent: true,
       devTools: true,
       preload: path.join(__dirname, 'preload/preload.js'),
     },
@@ -89,8 +90,6 @@ const createWindow = async () => {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
   });
 
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
@@ -134,3 +133,5 @@ app.on('activate', () => {
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
 });
+
+const expressApp = express();
