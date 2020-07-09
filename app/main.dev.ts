@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 /* eslint global-require: off, no-console: off */
 
 /**
@@ -16,6 +17,7 @@ import log from 'electron-log';
 import { ElectronBlocker } from '@cliqz/adblocker-electron';
 import fetch from 'cross-fetch'; // required 'fetch'
 import MenuBuilder from './menu';
+
 
 export default class AppUpdater {
   constructor() {
@@ -67,9 +69,11 @@ const createWindow = async () => {
   }
 
   mainWindow = new BrowserWindow({
-    show: false,
     width: 1024,
     height: 728,
+    // fullscreen: true,
+    // frame: true,
+    transparent: false,
     webPreferences: {
       webSecurity: true,
       nodeIntegration: true,
@@ -81,7 +85,9 @@ const createWindow = async () => {
 
   mainWindow.webContents.openDevTools();
 
-  mainWindow.loadURL(`https://chess.com/live`);
+  mainWindow.loadURL(`https://chess.com/live`, {
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
+  });
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
