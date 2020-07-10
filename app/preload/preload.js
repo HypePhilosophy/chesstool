@@ -21,7 +21,9 @@ async function startGame(){
 
 
 function findTable(){
+  console.log(isGameOver())
   if(document.getElementById('board-layout-sidebar') !== undefined && document.getElementsByClassName('move-text-component vertical-move-list-clickable')[0] !== undefined && !isGameOver()){
+    console.log('table found')
     movesToPGN();
   }
 }
@@ -101,6 +103,7 @@ function isGameOver(){
     }
   }
   if(document.getElementsByClassName('board-dialog-header-component game-over-header-component')[0] !== undefined || gameEnd){
+    uciCmd('ucinewgame');
     return true;
   }
   return false;
@@ -108,6 +111,7 @@ function isGameOver(){
 
 function sendFEN(fen){
   uciCmd(`position fen ${fen}`);
+  uciCmd(`go depth 15`);
   previousFEN = fen;
 }
 
@@ -129,7 +133,9 @@ document.addEventListener("DOMContentLoaded", startGame());
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
 const observer = new MutationObserver(function(mutations, observer) {
+  console.log(mutations[0].target)
     if(mutations[0].target.innerHTML.includes('coordinates outside')){
+      console.log('mutation detected')
       setTimeout(findTable, 50)
     }
 }); 
