@@ -19,7 +19,11 @@ import { ElectronBlocker } from '@cliqz/adblocker-electron';
 import fetch from 'cross-fetch'; // required 'fetch'
 import MenuBuilder from './menu';
 
+const cors = require('cors');
 const express = require('express');
+const stockfish = require("./scripts/stockfish");
+
+const engine = stockfish();
 
 export default class AppUpdater {
   constructor() {
@@ -139,39 +143,37 @@ const expressApp = express();
 
 expressApp.listen(3000);
 expressApp.use(express.urlencoded());
+expressApp.use(cors({credentials: true, origin: 'https://www.chess.com'}));
 
-expressApp.post('/stockfish', (req: any, res: any) => {
-  const uciMessage = req.body.uci;
-  const stockfish = require("./scripts/stockfish");
-  const engine = stockfish();
+expressApp.get('/stockfish', (req: any, res: any) => {
+  const uciMessage = decodeURIComponent(req.query.uci);  
 
-function send(str: string)
-{
-    console.log(`Sending: ${  str}`)
-    engine.postMessage(str);
-}
-
-if (process.argv[2] === "--help") {
-    console.log("Usage: node simple_node.js [FEN OR move1 move2 ...moveN]");
-    console.log("");
-    console.log("Examples:");
-    console.log("   node simple_node.js");
-    console.log("   node simple_node.js \"rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2\"");
-    console.log("   node simple_node.js g1f3 e7e5");
-    process.exit();
-}
-
-engine.onmessage = function (line: string)
-{
-    let match;
-    console.log(`Line: ${  line}`)
-    
-    if (typeof line !== "string") {
-        console.log("Got line:");
-        console.log(typeof line);
-        console.log(line);
-    }
-
+  function send(str: string)
+  {
+      console.log(`Sending: ${str}`)
+      engine.postMessage(str);
   }
-  send("uci");
+
+  if (process.argv[2] === "--help") {
+      console.log("Usage: node simple_node.js [FEN OR move1 move2 ...moveN]");
+      console.log("");
+      console.log("Examples:");
+      console.log("   node simple_node.js");
+      console.log("   node simple_node.js \"rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2\"");
+      console.log("   node simple_node.js g1f3 e7e5");
+      process.exit();
+  }
+
+  engine.onmessage = function (line: string)
+  {
+      console.log(`Line: ${line}`)
+      
+      if (typeof line !== "string") {
+          console.log("Got line:");
+          console.log(typeof line);
+          console.log(line);
+      }
+    }
+    res.end("foo");
+    send(uciMessage);
 })

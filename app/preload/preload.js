@@ -10,14 +10,13 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable no-console */
 // const stockfish = new Worker("stockfish.js");
-let stockfish = require('../scripts/stockfish');
-
 let currentNum = 0;
+let previousFEN = '';
 
-function startGame(){
-  uciCmd('uci');
-  uciCmd('ucinewgame');
-  uciCmd('isready');
+async function startGame(){
+  await uciCmd('uci');
+  await uciCmd('ucinewgame');
+  await uciCmd('isready');
 }
 
 
@@ -79,8 +78,7 @@ async function PGNtoFEN(pgn){
 
   // double checking everything
   fens.forEach(function(i, idx, array){
-    if (idx === array.length - 1){ 
-        // console.log(`current fen ${i}`)
+    if (idx === array.length - 1 && previousFEN !== i){ 
         sendFEN(i);
     }
  });
@@ -109,23 +107,20 @@ function isGameOver(){
 }
 
 function sendFEN(fen){
-  console.log('sending stockfish fen')
   uciCmd(`position fen ${fen}`);
-
+  previousFEN = fen;
 }
 
-function uciCmd(cmd) {
+async function uciCmd(cmd) {
   let xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
 
-  xhr.addEventListener("readystatechange", function() {
-    if(this.readyState === 4) {
-      console.log(this.responseText);
+  await xhr.addEventListener("readystatechange", function() {
+    if(this.readyState === 4 && this.status == 200) {
+      console.log(`Stockfish response ${this.responseText}`);
     }
   });
-
-  xhr.open("POST", `http://localhost:3000/stockfish?uci=${encodeURIComponent(cmd)}`);
-
+  xhr.open("GET", `http://localhost:3000/stockfish?uci=${encodeURIComponent(cmd)}`);
   xhr.send();
 }
 
@@ -134,10 +129,6 @@ document.addEventListener("DOMContentLoaded", startGame());
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
 const observer = new MutationObserver(function(mutations, observer) {
-    // board v-board chessboard-component flipped
-    
-    // console.log(mutations[0].target)
-
     if(mutations[0].target.innerHTML.includes('coordinates outside')){
       setTimeout(findTable, 50)
     }
@@ -150,4 +141,3 @@ observer.observe(document, {
   attributes: true,
   childList: true
 });
-// setInterval(findTable, 50);
