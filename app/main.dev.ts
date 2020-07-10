@@ -185,6 +185,6 @@ expressApp.get('/stockfish', (req: any, res: any) => {
   send(uciMessage);
   if(uciMessage.includes('position')){
     send('go depth 15');
-    send("d");
+    // send("d");
   }
 })

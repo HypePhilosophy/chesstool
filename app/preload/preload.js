@@ -42,7 +42,6 @@ async function movesToPGN(){
   let numberOfRows = 1;
   // eslint-disable-next-line prefer-const
   let pgn = "";
-  console.log(`current number of moves is ${numberOfMoves}`);
   if(currentNum !== numberOfMoves){
     currentNum++;
   }
@@ -123,7 +122,6 @@ function isGameOver(){
 
 function sendFEN(fen){
   uciCmd(`position fen ${fen}`);
-  // uciCmd(`go depth 15`);
   previousFEN = fen;
 }
 
@@ -143,18 +141,6 @@ async function uciCmd(cmd) {
   xhr.open("GET", `http://localhost:3000/stockfish?uci=${encodeURIComponent(cmd)}`);
   xhr.send();
 }
-
-let kingOnRightField = function (groundRow, king) {
-  let index = 0;
-
-  for (let i = 0; i < groundRow.length; i++) {
-      let number = parseInt(groundRow[i]);
-      index += isNaN(number) ? 1 : number;
-
-      if (index == 5 && groundRow[i] == king) side = 'white';
-      else side = 'black';
-  }
-};
 
 async function getSide(){
   if(document.getElementsByClassName('board-player-default-component board-player-default-bottom board-player-default-white undefined')[0] !== undefined){
