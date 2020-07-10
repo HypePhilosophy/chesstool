@@ -115,14 +115,19 @@ function sendFEN(fen){
 }
 
 function uciCmd(cmd) {
-  console.log(`UCI: ${cmd}`);
-  
-  stockfish.postMessage(cmd);
-}
+  let xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
 
-stockfish.onmessage = function onmessage(event) {
-  console.log(event.data);
-};
+  xhr.addEventListener("readystatechange", function() {
+    if(this.readyState === 4) {
+      console.log(this.responseText);
+    }
+  });
+
+  xhr.open("POST", `http://localhost:3000/stockfish?uci=${encodeURIComponent(cmd)}`);
+
+  xhr.send();
+}
 
 document.addEventListener("DOMContentLoaded", startGame());
 // eslint-disable-next-line prettier/prettier
