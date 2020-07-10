@@ -145,6 +145,8 @@ expressApp.listen(3000);
 expressApp.use(express.urlencoded());
 expressApp.use(cors({credentials: true, origin: 'https://www.chess.com'}));
 
+let previousResponse: string;
+
 expressApp.get('/stockfish', (req: any, res: any) => {
   const uciMessage = decodeURIComponent(req.query.uci);  
 
@@ -164,16 +166,25 @@ expressApp.get('/stockfish', (req: any, res: any) => {
       process.exit();
   }
 
-  engine.onmessage = function (line: string)
-  {
-      console.log(`Line: ${line}`)
-      
-      if (typeof line !== "string") {
-          console.log("Got line:");
-          console.log(typeof line);
-          console.log(line);
-      }
+  engine.onmessage = function (line: string){
+    console.log(`Line: ${line}`)
+    
+    if (typeof line !== "string") {
+        console.log("Got line:");
+        console.log(typeof line);
+        console.log(line);
     }
-    res.end("foo");
-    send(uciMessage);
+  
+    if(previousResponse !== line && line.includes('bestmove')){
+      previousResponse = line;
+      res.end(line);
+    }
+  }
+  // res.end('foo');
+
+  send(uciMessage);
+  if(uciMessage.includes('position')){
+    send('go depth 15');
+    send("d");
+  }
 })

@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable radix */
 /* eslint-disable prefer-const */
 /* eslint-disable eqeqeq */
 /* eslint-disable no-shadow */
@@ -12,6 +14,9 @@
 // const stockfish = new Worker("stockfish.js");
 let currentNum = 0;
 let previousFEN = '';
+let side = false;
+let fenCount = 0;
+let squareCount = 200;
 
 async function startGame(){
   await uciCmd('uci');
@@ -21,9 +26,11 @@ async function startGame(){
 
 
 function findTable(){
-  console.log(isGameOver())
+  console.log(`side ${side}`)
+  if(!side && document.getElementById('board-layout-sidebar') !== undefined && document.getElementsByClassName('move-text-component vertical-move-list-clickable')[0] === undefined){
+    getSide();
+  }
   if(document.getElementById('board-layout-sidebar') !== undefined && document.getElementsByClassName('move-text-component vertical-move-list-clickable')[0] !== undefined && !isGameOver()){
-    console.log('table found')
     movesToPGN();
   }
 }
@@ -80,8 +87,13 @@ async function PGNtoFEN(pgn){
 
   // double checking everything
   fens.forEach(function(i, idx, array){
-    if (idx === array.length - 1 && previousFEN !== i){ 
+    if (idx === array.length - 1 && previousFEN !== i){
+      fenCount++;
+      if(side === 'white' && !isOdd(fenCount)){
         sendFEN(i);
+      } else if(side === 'black' && isOdd(fenCount)){
+        sendFEN(i);
+      }
     }
  });
 }
@@ -103,7 +115,7 @@ function isGameOver(){
     }
   }
   if(document.getElementsByClassName('board-dialog-header-component game-over-header-component')[0] !== undefined || gameEnd){
-    uciCmd('ucinewgame');
+    side = false;
     return true;
   }
   return false;
@@ -111,7 +123,7 @@ function isGameOver(){
 
 function sendFEN(fen){
   uciCmd(`position fen ${fen}`);
-  uciCmd(`go depth 15`);
+  // uciCmd(`go depth 15`);
   previousFEN = fen;
 }
 
@@ -121,11 +133,101 @@ async function uciCmd(cmd) {
 
   await xhr.addEventListener("readystatechange", function() {
     if(this.readyState === 4 && this.status == 200) {
-      console.log(`Stockfish response ${this.responseText}`);
+      // console.log(`Stockfish response ${this.responseText}`);
+      let response = this.responseText;
+      let bestMove = response.split('bestmove')[1].split('ponder')[0].replace(/ /g, "");
+      console.log(`bestmove ${bestMove}`);
+      markBoard(bestMove);
     }
   });
   xhr.open("GET", `http://localhost:3000/stockfish?uci=${encodeURIComponent(cmd)}`);
   xhr.send();
+}
+
+let kingOnRightField = function (groundRow, king) {
+  let index = 0;
+
+  for (let i = 0; i < groundRow.length; i++) {
+      let number = parseInt(groundRow[i]);
+      index += isNaN(number) ? 1 : number;
+
+      if (index == 5 && groundRow[i] == king) side = 'white';
+      else side = 'black';
+  }
+};
+
+async function getSide(){
+  if(document.getElementsByClassName('board-player-default-component board-player-default-bottom board-player-default-white undefined')[0] !== undefined){
+    side = 'white';
+    // Default White FEN starting position
+    uciCmd(`position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1`);
+  } else if(document.getElementsByClassName('board-player-default-component board-player-default-bottom board-player-default-black undefined')[0] !== undefined){
+    side = 'black';
+  }
+}
+
+function getPosition(x){
+  let boardNum = 0;
+  switch(x){
+    case 'a':
+    boardNum = 1;
+    break;
+
+  case 'b':
+    boardNum = 2;
+    break;
+
+  case 'c':
+    boardNum = 3;
+    break;
+
+  case 'd':
+    boardNum = 4;
+    break;
+  
+  case 'e':
+    boardNum = 5;
+    break;
+
+  case 'f':
+    boardNum = 6;
+    break;
+  
+  case 'g':
+    boardNum = 7;
+    break;
+  
+  case 'h':
+    boardNum = 8;
+    break;
+
+  default:
+    break;
+  }
+  return boardNum;
+}
+
+function markBoard(bestMove){
+  console.log( bestMove.match(/.{1,2}/g) );
+  let array = bestMove.match(/.{1,2}/g);
+  let currentMove = '';
+  let futureMove = '';
+  // Algebraic notation to board
+  currentMove = currentMove.concat(0,getPosition(array[0][0]),0,array[0][1]);
+  futureMove = futureMove.concat(0,getPosition(array[1][0]),0,array[1][1]);
+  createHighlight(currentMove, 'rgb(244, 42, 50);')
+  createHighlight(futureMove, '#0000FF;');
+  console.log(currentMove, futureMove);
+}
+
+// Create the square highlight element
+function createHighlight(coordinates, color){
+  let element = document.createElement("div");
+  element.id = `square-${squareCount}`;
+  element.className = `square square-${coordinates} marked-square`;
+  element.style = `background-color: ${color} opacity: 0.9;`;
+  squareCount++;
+  document.getElementById('game-board').appendChild(element);
 }
 
 document.addEventListener("DOMContentLoaded", startGame());
@@ -133,13 +235,11 @@ document.addEventListener("DOMContentLoaded", startGame());
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
 const observer = new MutationObserver(function(mutations, observer) {
-  console.log(mutations[0].target)
+  // console.log(mutations[0].target)
     if(mutations[0].target.innerHTML.includes('coordinates outside')){
-      console.log('mutation detected')
       setTimeout(findTable, 50)
     }
-}); 
-
+});
 // define what element should be observed by the observer
 // and what types of mutations trigger the callback
 observer.observe(document, {
