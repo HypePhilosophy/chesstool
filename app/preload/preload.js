@@ -18,6 +18,7 @@ let side = false;
 let fenCount = 0;
 let squareCount = 200;
 
+
 async function startGame(){
   await uciCmd('uci');
   await uciCmd('ucinewgame');
@@ -26,7 +27,6 @@ async function startGame(){
 
 
 function findTable(){
-  console.log(`side ${side}`)
   if(!side && document.getElementById('board-layout-sidebar') !== undefined && document.getElementsByClassName('move-text-component vertical-move-list-clickable')[0] === undefined){
     getSide();
   }
@@ -36,7 +36,6 @@ function findTable(){
 }
 
 async function movesToPGN(){
-  const user = document.getElementsByClassName('image user-nav-avatar')[0].src;
   const moveElement = document.getElementsByClassName('move-text-component vertical-move-list-clickable');
   const numberOfMoves = moveElement.length;
   let numberOfRows = 1;
@@ -131,7 +130,6 @@ async function uciCmd(cmd) {
 
   await xhr.addEventListener("readystatechange", function() {
     if(this.readyState === 4 && this.status == 200) {
-      // console.log(`Stockfish response ${this.responseText}`);
       let response = this.responseText;
       let bestMove = response.split('bestmove')[1].split('ponder')[0].replace(/ /g, "");
       console.log(`bestmove ${bestMove}`);
@@ -143,10 +141,14 @@ async function uciCmd(cmd) {
 }
 
 async function getSide(){
+document.body.innerHTML += `<nav role='navigation'> <div id="menuToggle"><!-- A fake / hidden checkbox is used as click reciever, so you can use the :checked selector on it. --> <input type="checkbox"/><!-- Some spans to act as a hamburger. They are acting like a real hamburger, not that McDonalds stuff. --> <span></span> <span></span> <span></span><!-- Too bad the menu has to be inside of the button but hey, it's pure CSS magic. --> <ul id="menu"> <a href="#"><li>Home</li></a> <a href="#"><li>About</li></a> <a href="#"><li>Info</li></a> <a href="#"><li>Contact</li></a> <a href="https://erikterwan.com/" target="_blank"><li>Show me more</li></a> </ul> </div></nav>`;
+
   if(document.getElementsByClassName('board-player-default-component board-player-default-bottom board-player-default-white undefined')[0] !== undefined){
     side = 'white';
     // Default White FEN starting position
-    uciCmd(`position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1`);
+    setTimeout(() => {
+      uciCmd(`position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1`);
+    }, 1000);
   } else if(document.getElementsByClassName('board-player-default-component board-player-default-bottom board-player-default-black undefined')[0] !== undefined){
     side = 'black';
   }
@@ -156,45 +158,44 @@ function getPosition(x){
   let boardNum = 0;
   switch(x){
     case 'a':
-    boardNum = 1;
-    break;
+      boardNum = 1;
+      break;
 
-  case 'b':
-    boardNum = 2;
-    break;
+    case 'b':
+      boardNum = 2;
+      break;
 
-  case 'c':
-    boardNum = 3;
-    break;
+    case 'c':
+      boardNum = 3;
+      break;
 
-  case 'd':
-    boardNum = 4;
-    break;
-  
-  case 'e':
-    boardNum = 5;
-    break;
+    case 'd':
+      boardNum = 4;
+      break;
+    
+    case 'e':
+      boardNum = 5;
+      break;
 
-  case 'f':
-    boardNum = 6;
-    break;
-  
-  case 'g':
-    boardNum = 7;
-    break;
-  
-  case 'h':
-    boardNum = 8;
-    break;
+    case 'f':
+      boardNum = 6;
+      break;
+    
+    case 'g':
+      boardNum = 7;
+      break;
+    
+    case 'h':
+      boardNum = 8;
+      break;
 
-  default:
-    break;
+    default:
+      break;
   }
   return boardNum;
 }
 
 function markBoard(bestMove){
-  console.log( bestMove.match(/.{1,2}/g) );
   let array = bestMove.match(/.{1,2}/g);
   let currentMove = '';
   let futureMove = '';
@@ -203,7 +204,6 @@ function markBoard(bestMove){
   futureMove = futureMove.concat(0,getPosition(array[1][0]),0,array[1][1]);
   createHighlight(currentMove, 'rgb(244, 42, 50);')
   createHighlight(futureMove, '#0000FF;');
-  console.log(currentMove, futureMove);
 }
 
 // Create the square highlight element
@@ -217,12 +217,14 @@ function createHighlight(coordinates, color){
 }
 
 document.addEventListener("DOMContentLoaded", startGame());
+
 // eslint-disable-next-line prettier/prettier
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
 const observer = new MutationObserver(function(mutations, observer) {
   // console.log(mutations[0].target)
-    if(mutations[0].target.innerHTML.includes('coordinates outside')){
+    if(mutations[0].target.innerHTML.includes('pieces')){
+      console.log('change detected')
       setTimeout(findTable, 50)
     }
 });

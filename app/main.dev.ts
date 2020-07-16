@@ -95,16 +95,17 @@ const createWindow = async () => {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
   });
 
-  mainWindow.webContents.on('did-finish-load', () => {
+  mainWindow.webContents.on('did-finish-load', function() {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-      mainWindow.focus();
-    }
+    // if (process.env.START_MINIMIZED) {
+    //   mainWindow.minimize();
+    // } else {
+    //   mainWindow.show();
+    //   mainWindow.focus();
+    // }
+    mainWindow.webContents.insertCSS('a{text-decoration:none;color:#232323;transition:color .3s ease}a:hover{color:tomato}#menuToggle{display:block;position:absolute;top:50px;right:50px;z-index:1;-webkit-user-select:none;user-select:none}#menuToggle input{display:block;width:40px;height:32px;position:absolute;top:-7px;left:-5px;cursor:pointer;opacity:0;z-index:2;-webkit-touch-callout:none}#menuToggle span{display:block;width:33px;height:4px;margin-bottom:5px;position:relative;background:#cdcdcd;border-radius:3px;z-index:1;transform-origin:4px 0;transition:transform .5s cubic-bezier(.77,.2,.05,1),background .5s cubic-bezier(.77,.2,.05,1),opacity .55s ease}#menuToggle span:first-child{transform-origin:0 0}#menuToggle span:nth-last-child(2){transform-origin:0 100%}#menuToggle input:checked~span{opacity:1;transform:rotate(45deg) translate(-2px,-1px);background:#232323}#menuToggle input:checked~span:nth-last-child(3){opacity:0;transform:rotate(0) scale(.2,.2)}#menuToggle input:checked~span:nth-last-child(2){opacity:1;transform:rotate(-45deg) translate(0,-1px)}#menu{position:absolute;width:300px;margin:-100px 0 0 0;padding:50px;padding-top:125px;right:-100px;background:#ededed;list-style-type:none;-webkit-font-smoothing:antialiased;transform-origin:0 0;transform:translate(100%,0);transition:transform .5s cubic-bezier(.77,.2,.05,1)}#menu li{padding:10px 0;font-size:22px}#menuToggle input:checked~ul{transform:scale(1,1);opacity:1}')
   });
 
   mainWindow.on('closed', () => {
@@ -146,6 +147,7 @@ expressApp.use(express.urlencoded());
 expressApp.use(cors({credentials: true, origin: 'https://www.chess.com'}));
 
 let previousResponse: string;
+let firstMove = true;
 
 expressApp.get('/stockfish', (req: any, res: any) => {
   const uciMessage = decodeURIComponent(req.query.uci);  
@@ -166,7 +168,7 @@ expressApp.get('/stockfish', (req: any, res: any) => {
       process.exit();
   }
 
-  engine.onmessage = function (line: string){
+  engine.onmessage = function(line: string){
     console.log(`Line: ${line}`)
     
     if (typeof line !== "string") {
@@ -175,12 +177,19 @@ expressApp.get('/stockfish', (req: any, res: any) => {
         console.log(line);
     }
   
-    if(previousResponse !== line && line.includes('bestmove')){
+    if(line.includes('bestmove') && previousResponse !== line || line.includes('bestmove') && firstMove){
       previousResponse = line;
       res.end(line);
     }
   }
-  // res.end('foo');
+
+  if(uciMessage === 'position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'){
+    console.log('first message true')
+    firstMove = true;
+  } else {
+    console.log('first message false')
+    firstMove = false;
+  }
 
   send(uciMessage);
   if(uciMessage.includes('position')){
