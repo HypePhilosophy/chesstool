@@ -1,3 +1,6 @@
+/* eslint-disable vars-on-top */
+/* eslint-disable no-var */
+/* eslint-disable prefer-template */
 /* eslint-disable no-restricted-globals */
 /* eslint-disable radix */
 /* eslint-disable prefer-const */
@@ -27,16 +30,17 @@ async function startGame(){
 
 
 function findTable(){
-  if(!side && document.getElementById('board-layout-sidebar') !== undefined && document.getElementsByClassName('move-text-component vertical-move-list-clickable')[0] === undefined){
+  if(!side && document.getElementById('layout-move-list vertical-move-list') !== undefined && document.querySelector("div[class*='node']") == null){
     getSide();
   }
-  if(document.getElementById('board-layout-sidebar') !== undefined && document.getElementsByClassName('move-text-component vertical-move-list-clickable')[0] !== undefined && !isGameOver()){
+  if(document.getElementById('layout-move-list vertical-move-list') !== undefined && document.querySelector("div[class*='node']") !== undefined && !isGameOver()){
     movesToPGN();
   }
 }
 
 async function movesToPGN(){
-  const moveElement = document.getElementsByClassName('move-text-component vertical-move-list-clickable');
+  // const moveElement = document.getElementsByClassName('move-text-component vertical-move-list-clickable');
+  const moveElement = document.querySelectorAll("div[class*='node']")
   const numberOfMoves = moveElement.length;
   let numberOfRows = 1;
   // eslint-disable-next-line prefer-const
@@ -87,6 +91,9 @@ async function PGNtoFEN(pgn){
   fens.forEach(function(i, idx, array){
     if (idx === array.length - 1 && previousFEN !== i){
       fenCount++;
+      console.log(side)
+      console.log(fenCount)
+
       if(side === 'white' && !isOdd(fenCount)){
         sendFEN(i);
       } else if(side === 'black' && isOdd(fenCount)){
@@ -108,11 +115,11 @@ function isGameOver(){
   const numberOfMoves = moveElement.length;
   let gameEnd = false;
   for(let x = 0; x < numberOfMoves; x++){
-    if(moveElement[x].innerText.includes('-') && !moveElement[x].innerText.includes('O-O')){
+    if(moveElement[x].innerText.includes('-') || !moveElement[x].innerText.includes('O-O')){
       gameEnd = true;
     }
   }
-  if(document.getElementsByClassName('board-dialog-header-component game-over-header-component')[0] !== undefined || gameEnd){
+  if(document.getElementsByClassName('game-over-player-component game-over-modal-player')[0] !== undefined || gameEnd){
     side = false;
     return true;
   }
@@ -120,6 +127,7 @@ function isGameOver(){
 }
 
 function sendFEN(fen){
+  console.log('sent fen ' + fen);
   uciCmd(`position fen ${fen}`);
   previousFEN = fen;
 }
@@ -141,16 +149,16 @@ async function uciCmd(cmd) {
 }
 
 async function getSide(){
-document.body.innerHTML += `<nav role='navigation'> <div id="menuToggle"><!-- A fake / hidden checkbox is used as click reciever, so you can use the :checked selector on it. --> <input type="checkbox"/><!-- Some spans to act as a hamburger. They are acting like a real hamburger, not that McDonalds stuff. --> <span></span> <span></span> <span></span><!-- Too bad the menu has to be inside of the button but hey, it's pure CSS magic. --> <ul id="menu"> <a href="#"><li>Home</li></a> <a href="#"><li>About</li></a> <a href="#"><li>Info</li></a> <a href="#"><li>Contact</li></a> <a href="https://erikterwan.com/" target="_blank"><li>Show me more</li></a> </ul> </div></nav>`;
-
-  if(document.getElementsByClassName('board-player-default-component board-player-default-bottom board-player-default-white undefined')[0] !== undefined){
+// document.body.innerHTML += `<nav role='navigation'> <div id="menuToggle"><!-- A fake / hidden checkbox is used as click reciever, so you can use the :checked selector on it. --> <input type="checkbox"/><!-- Some spans to act as a hamburger. They are acting like a real hamburger, not that McDonalds stuff. --> <span></span> <span></span> <span></span><!-- Too bad the menu has to be inside of the button but hey, it's pure CSS magic. --> <ul id="menu"> <a href="#"><li>Home</li></a> <a href="#"><li>About</li></a> <a href="#"><li>Info</li></a> <a href="#"><li>Contact</li></a> <a href="https://erikterwan.com/" target="_blank"><li>Show me more</li></a> </ul> </div></nav>`;
+  console.log('getside')
+  if(document.getElementsByClassName('evaluation-bar-bar evaluation-bar-flipped')[0] !== undefined){
+    side = 'black';
+  } else {
     side = 'white';
     // Default White FEN starting position
     setTimeout(() => {
       uciCmd(`position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1`);
     }, 1000);
-  } else if(document.getElementsByClassName('board-player-default-component board-player-default-bottom board-player-default-black undefined')[0] !== undefined){
-    side = 'black';
   }
 }
 
@@ -200,6 +208,7 @@ function markBoard(bestMove){
   let currentMove = '';
   let futureMove = '';
   // Algebraic notation to board
+  console.log(array)
   currentMove = currentMove.concat(0,getPosition(array[0][0]),0,array[0][1]);
   futureMove = futureMove.concat(0,getPosition(array[1][0]),0,array[1][1]);
   createHighlight(currentMove, 'rgb(244, 42, 50);')
@@ -216,22 +225,41 @@ function createHighlight(coordinates, color){
   document.getElementById('game-board').appendChild(element);
 }
 
-document.addEventListener("DOMContentLoaded", startGame());
+document.addEventListener("DOMContentLoaded", controller());
 
-// eslint-disable-next-line prettier/prettier
-MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+function controller(){
+  let found = false;
+  const urlArray = ["live","computer","puzzles/rush","puzzles/rated","puzzles/battle"];
+  for(var i = 0; i < urlArray.length; i++)
+  if(window.location.href.includes(urlArray[i]) && !found){
+    startGame();
 
-const observer = new MutationObserver(function(mutations, observer) {
-  // console.log(mutations[0].target)
-    if(mutations[0].target.innerHTML.includes('pieces')){
-      console.log('change detected')
-      setTimeout(findTable, 50)
+    switch(urlArray[i]) {
+      case "live": changeFinder('live');
+      break;
+
+      default: break;
     }
-});
-// define what element should be observed by the observer
-// and what types of mutations trigger the callback
-observer.observe(document, {
-  subtree: true,
-  attributes: true,
-  childList: true
-});
+    found = true;
+  }
+}
+
+function changeFinder(method){
+// eslint-disable-next-line prettier/prettier
+  MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+
+  const observer = new MutationObserver(function(mutations, observer) {
+    // console.log(mutations[0].target)
+      if(mutations[0].target.innerHTML.includes('pieces') && !isGameOver()){
+        console.log('change detected')
+        setTimeout(findTable, 50)
+      }
+  });
+  // define what element should be observed by the observer
+  // and what types of mutations trigger the callback
+  observer.observe(document, {
+    subtree: true,
+    attributes: true,
+    childList: true
+  });
+}
