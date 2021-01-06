@@ -21,13 +21,50 @@ let side = false;
 let fenCount = 0;
 let squareCount = 200;
 
-
+// * Init game for stockfish engine
 async function startGame(){
   await uciCmd('uci');
   await uciCmd('ucinewgame');
   await uciCmd('isready');
 }
 
+// * looks for the method to use based on url
+function controller(){
+  let found = false;
+  const urlArray = ["live","computer","puzzles/rush","puzzles/rated","puzzles/battle"];
+  for(var i = 0; i < urlArray.length; i++)
+  if(window.location.href.includes(urlArray[i]) && !found){
+    startGame();
+
+    switch(urlArray[i]) {
+      case "live": changeFinder('live');
+      break;
+
+      default: break;
+    }
+    found = true;
+  }
+}
+
+function changeFinder(method){
+  // eslint-disable-next-line prettier/prettier
+    MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+  
+    const observer = new MutationObserver(function(mutations, observer) {
+      // console.log(mutations[0].target)
+        if(mutations[0].target.innerHTML.includes('pieces') && !isGameOver()){
+          console.log('change detected')
+          setTimeout(findTable, 50)
+        }
+    });
+    // define what element should be observed by the observer
+    // and what types of mutations trigger the callback
+    observer.observe(document, {
+      subtree: true,
+      attributes: true,
+      childList: true
+    });
+  }
 
 function findTable(){
   if(!side && document.getElementById('layout-move-list vertical-move-list') !== undefined && document.querySelector("div[class*='node']") == null){
@@ -226,40 +263,3 @@ function createHighlight(coordinates, color){
 }
 
 document.addEventListener("DOMContentLoaded", controller());
-
-function controller(){
-  let found = false;
-  const urlArray = ["live","computer","puzzles/rush","puzzles/rated","puzzles/battle"];
-  for(var i = 0; i < urlArray.length; i++)
-  if(window.location.href.includes(urlArray[i]) && !found){
-    startGame();
-
-    switch(urlArray[i]) {
-      case "live": changeFinder('live');
-      break;
-
-      default: break;
-    }
-    found = true;
-  }
-}
-
-function changeFinder(method){
-// eslint-disable-next-line prettier/prettier
-  MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-
-  const observer = new MutationObserver(function(mutations, observer) {
-    // console.log(mutations[0].target)
-      if(mutations[0].target.innerHTML.includes('pieces') && !isGameOver()){
-        console.log('change detected')
-        setTimeout(findTable, 50)
-      }
-  });
-  // define what element should be observed by the observer
-  // and what types of mutations trigger the callback
-  observer.observe(document, {
-    subtree: true,
-    attributes: true,
-    childList: true
-  });
-}
