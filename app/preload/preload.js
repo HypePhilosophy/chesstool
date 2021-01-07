@@ -20,6 +20,21 @@ let previousFEN = '';
 let side = false;
 let fenCount = 0;
 let squareCount = 200;
+let gameArray = [
+  {
+    live: {
+      tableId: "vertical-move-list-component",
+      sideId: "board-player-default-white"
+    },
+    computer: {
+      tableId: "layout-move-list vertical-move-list",
+      sideId: "evaluation-bar-bar evaluation-bar-flipped",
+      movementId: document.querySelector("div[class*='node']")
+    }
+  }
+]
+
+document.addEventListener("DOMContentLoaded", controller());
 
 // * Init game for stockfish engine
 async function startGame(){
@@ -55,6 +70,10 @@ function changeFinder(method){
         if(mutations[0].target.innerHTML.includes('pieces') && !isGameOver()){
           console.log('change detected')
           setTimeout(findTable, 50)
+        } else if(mutations[0].target.innerHTML.includes('vertical-move-list-notation-vertical') && !isGameOver()) {
+          console.log(mutations[0].target.innerHTML)
+        } else if(!isGameOver()){
+
         }
     });
     // define what element should be observed by the observer
@@ -67,23 +86,41 @@ function changeFinder(method){
   }
 
 function findTable(){
-  if(!side && document.getElementById('layout-move-list vertical-move-list') !== undefined && document.querySelector("div[class*='node']") == null){
+  if(!side && document.getElementsByClassName('vertical-move-list-component')[0] != undefined){
     getSide();
   }
-  if(document.getElementById('layout-move-list vertical-move-list') !== undefined && document.querySelector("div[class*='node']") !== undefined && !isGameOver()){
+  if(document.getElementsByClassName('vertical-move-list-component')[0] != undefined && !isGameOver()){
     movesToPGN();
   }
 }
 
+async function getSide(){
+  // document.getElementsByClassName('evaluation-bar-bar evaluation-bar-flipped')[0] !== undefined
+    console.log('getside')
+    if(document.getElementsByClassName('board-player-default-component board-player-default-top board-player-default-white undefined')[0] !== undefined){
+      side = 'black';
+    } else {
+      side = 'white';
+      // Default White FEN starting position
+      setTimeout(() => {
+        uciCmd(`position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1`);
+      }, 1000);
+    }
+    console.log(`side ${side}`)
+  }
+
 async function movesToPGN(){
-  // const moveElement = document.getElementsByClassName('move-text-component vertical-move-list-clickable');
-  const moveElement = document.querySelectorAll("div[class*='node']")
+  console.log('pgn counter')
+  const moveElement = document.getElementsByClassName('move-text-component vertical-move-list-clickable');
+  // const moveElement = document.querySelectorAll("div[class*='node']")
   const numberOfMoves = moveElement.length;
   let numberOfRows = 1;
   // eslint-disable-next-line prefer-const
   let pgn = "";
+  console.log('current num: ' + currentNum + 'number of moves: ' + numberOfMoves)
   if(currentNum !== numberOfMoves){
     currentNum++;
+    console.log('current num ' + currentNum)
   }
 
   for(let x = 0; x < numberOfMoves; x++){
@@ -102,7 +139,8 @@ async function movesToPGN(){
       }
       pgn = pgn.concat(`${moveElement[x].innerText} ${ending}`);
     }
-    if(x === numberOfMoves-1){
+    console.log(pgn)
+    if(x == numberOfMoves-1){
       console.log(`current pgn: ${pgn}`)
       PGNtoFEN(pgn);
     }
@@ -185,20 +223,6 @@ async function uciCmd(cmd) {
   xhr.send();
 }
 
-async function getSide(){
-// document.body.innerHTML += `<nav role='navigation'> <div id="menuToggle"><!-- A fake / hidden checkbox is used as click reciever, so you can use the :checked selector on it. --> <input type="checkbox"/><!-- Some spans to act as a hamburger. They are acting like a real hamburger, not that McDonalds stuff. --> <span></span> <span></span> <span></span><!-- Too bad the menu has to be inside of the button but hey, it's pure CSS magic. --> <ul id="menu"> <a href="#"><li>Home</li></a> <a href="#"><li>About</li></a> <a href="#"><li>Info</li></a> <a href="#"><li>Contact</li></a> <a href="https://erikterwan.com/" target="_blank"><li>Show me more</li></a> </ul> </div></nav>`;
-  console.log('getside')
-  if(document.getElementsByClassName('evaluation-bar-bar evaluation-bar-flipped')[0] !== undefined){
-    side = 'black';
-  } else {
-    side = 'white';
-    // Default White FEN starting position
-    setTimeout(() => {
-      uciCmd(`position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1`);
-    }, 1000);
-  }
-}
-
 function getPosition(x){
   let boardNum = 0;
   switch(x){
@@ -262,4 +286,3 @@ function createHighlight(coordinates, color){
   document.getElementById('game-board').appendChild(element);
 }
 
-document.addEventListener("DOMContentLoaded", controller());
