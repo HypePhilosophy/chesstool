@@ -67,14 +67,16 @@ function changeFinder(method){
   
     const observer = new MutationObserver(function(mutations, observer) {
       // console.log(mutations[0].target)
-        if(mutations[0].target.innerHTML.includes('pieces') && !isGameOver()){
+      // console.log('is the game over?' + !isGameOver())
+        if(mutations[0].target.innerHTML.includes('pieces')){
           console.log('change detected')
           setTimeout(findTable, 50)
-        } else if(mutations[0].target.innerHTML.includes('vertical-move-list-notation-vertical') && !isGameOver()) {
-          console.log(mutations[0].target.innerHTML)
-        } else if(!isGameOver()){
-
         }
+        // } else if(mutations[0].target.innerHTML.includes('vertical-move-list-notation-vertical') && !isGameOver()) {
+        //   console.log('piece move')
+        // } else if(!isGameOver()){
+        //   console.log(mutations[0].target.innerHTML)
+        // }
     });
     // define what element should be observed by the observer
     // and what types of mutations trigger the callback
@@ -89,7 +91,7 @@ function findTable(){
   if(!side && document.getElementsByClassName('vertical-move-list-component')[0] != undefined){
     getSide();
   }
-  if(document.getElementsByClassName('vertical-move-list-component')[0] != undefined && !isGameOver()){
+  if(document.getElementsByClassName('vertical-move-list-component')[0] != undefined){
     movesToPGN();
   }
 }
@@ -190,7 +192,7 @@ function isGameOver(){
   const numberOfMoves = moveElement.length;
   let gameEnd = false;
   for(let x = 0; x < numberOfMoves; x++){
-    if(moveElement[x].innerText.includes('-') || !moveElement[x].innerText.includes('O-O')){
+    if(moveElement[x].innerText.includes('1-0') || !moveElement[x].innerText.includes('O-O') || moveElement[x].innerText.includes('0-1')){
       gameEnd = true;
     }
   }
