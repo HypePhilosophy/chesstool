@@ -112,17 +112,14 @@ async function getSide(){
   }
 
 async function movesToPGN(){
-  console.log('pgn counter')
   const moveElement = document.getElementsByClassName('move-text-component vertical-move-list-clickable');
   // const moveElement = document.querySelectorAll("div[class*='node']")
   const numberOfMoves = moveElement.length;
   let numberOfRows = 1;
   // eslint-disable-next-line prefer-const
   let pgn = "";
-  console.log('current num: ' + currentNum + 'number of moves: ' + numberOfMoves)
   if(currentNum !== numberOfMoves){
     currentNum++;
-    console.log('current num ' + currentNum)
   }
 
   for(let x = 0; x < numberOfMoves; x++){
@@ -171,9 +168,9 @@ async function PGNtoFEN(pgn){
       console.log(side)
       console.log(fenCount)
 
-      if(side === 'white' && !isOdd(fenCount)){
+      if(side === 'white'){// !isOdd(fenCount)
         sendFEN(i);
-      } else if(side === 'black' && isOdd(fenCount)){
+      } else if(side === 'black'){// isOdd(fenCount)
         sendFEN(i);
       }
     }
