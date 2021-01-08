@@ -47,18 +47,21 @@ async function startGame(){
 function controller(){
   let found = false;
   const urlArray = ["live","computer","puzzles/rush","puzzles/rated","puzzles/battle"];
-  for(var i = 0; i < urlArray.length; i++)
-  if(window.location.href.includes(urlArray[i]) && !found){
-    startGame();
-
-    switch(urlArray[i]) {
-      case "live": changeFinder('live');
-      break;
-
-      default: break;
+  for(var i = 0; i < urlArray.length; i++){
+    if(window.location.href.includes(urlArray[i]) && !found){
+      startGame();
+  
+      switch(urlArray[i]) {
+        case "live": changeFinder('live');
+        break;
+  
+        default: break;
+      }
+      found = true;
     }
-    found = true;
   }
+  // Remove ads
+  
 }
 
 function changeFinder(method){
@@ -68,10 +71,19 @@ function changeFinder(method){
     const observer = new MutationObserver(function(mutations, observer) {
       // console.log(mutations[0].target)
       // console.log('is the game over?' + !isGameOver())
-        if(mutations[0].target.innerHTML.includes('pieces')){
-          console.log('change detected')
-          setTimeout(findTable, 50)
-        }
+
+      // * Removed ads and reset the margin to the right
+      var adDocument = document.getElementById('board-layout-ad');
+      if(adDocument != undefined){
+        adDocument.remove();
+        var body = document.getElementsByTagName('body');
+        body[0].style = 'margin-right: 15px !important;';
+      }
+      if(mutations[0].target.innerHTML.includes('pieces') && !mutations[0].target.innerHTML.includes('vertical-move-list-notation-vertical')){
+        // console.log(mutations[0].target.innerHTML)
+        // console.log('change detected')
+        setTimeout(findTable, 50)
+      }
         // } else if(mutations[0].target.innerHTML.includes('vertical-move-list-notation-vertical') && !isGameOver()) {
         //   console.log('piece move')
         // } else if(!isGameOver()){
@@ -138,7 +150,7 @@ async function movesToPGN(){
       }
       pgn = pgn.concat(`${moveElement[x].innerText} ${ending}`);
     }
-    console.log(pgn)
+
     if(x == numberOfMoves-1){
       console.log(`current pgn: ${pgn}`)
       PGNtoFEN(pgn);
