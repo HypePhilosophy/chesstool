@@ -7,4 +7,14 @@ I am in no way responsible for the misuse of this program or advocating for unfa
 ## About
 Chesstool came about as a fun project to pursue to help me overcome my programming burnout. By combining my love for chess and devotion to programming I was able to create an application that utilizes the [Stockfish Chess AI](https://github.com/official-stockfish/Stockfish). My interest stems from the ingenious idea of marking chess pieces on the board which I discovered from [ChessBotX](https://chess-bot.com/). However, unlike ChessBotX, this tool is FREE and is meant primarily for education. The decision to opensource this project instead of putting it behind a paywall comes from my belief that the sharing of code -- no matter how insignificant -- serves to benefit society. I hope you will enjoy this project as much as I do!
 
-## 
+## Setup
+1. Clone the repository
+2. Install the necessary dependencies through yarn
+3. Run the command `npm run start`
+
+## How it works
+Chesstool was created so that users would not have to download a separate program to play chess on a browser. Instead, this entire application is the browser and tool combined. The Chesstool consists of two parts.
+
+1. chess.com through browser
+2. Stockfish Chess Engine
+
