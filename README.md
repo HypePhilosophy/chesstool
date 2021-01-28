@@ -45,4 +45,4 @@ Utilizing Electron's Chromium wrapper, the target website is loaded into a brows
 #### As you can see, with the Chesstool rated at 3438 ELO, even a professional player rated at 2229 ELO doesn't stand a chance.
 
 ## Reflections
-Special thanks to [Pratik](https://github.com/pratikplayer) for offering to be my Guinea pig for this project. You can find his FIDE profile [here](https://ratings.fide.com/profile/30920450). Also, in case you're reading this Daniel Rensch, I'm open for a job ;).
+Special thanks to [Pratik](https://github.com/pratikplayer) for offering to be my Guinea pig for this project. You can find his FIDE profile [here](https://ratings.fide.com/profile/30920450). Also, in case you're reading this Danny Rensch, I'm open for a job ;).
