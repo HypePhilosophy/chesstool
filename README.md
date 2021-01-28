@@ -39,3 +39,5 @@ Utilizing Electron's Chromium wrapper, the target website is loaded into a brows
 ![Winning against a titled player](./assets/win.png)
 ### D. 96.1% accuracy against a CM
 ![Winning against a titled player](./assets/analysis.png)
+
+#### As you can see, with the Chesstool rated at 3438 ELO, even a professional player rated at 2229 ELO doesn't stand a chance.
