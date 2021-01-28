@@ -55,4 +55,4 @@ hxg4 22. Nh4 Rfxd4 23. Nf5 Qc5 24. Nxd4 Rxd4 25. Rxd4 Qxd4 26. Rd1 1-0
 ```
 
 ## Reflections
-Special thanks to [Pratik](https://github.com/pratikplayer) for offering to be my Guinea pig for this project. You can find his FIDE profile [here](https://ratings.fide.com/profile/30920450). Also, in case you're reading this Danny Rensch, I'm open for a job ;).
+Special thanks to [Pratik](https://github.com/pratikplayer) for being my Guinea pig for this project. You can find his FIDE profile [here](https://ratings.fide.com/profile/30920450). Also, in case you're reading this Danny Rensch, I'm open for a job ;).
