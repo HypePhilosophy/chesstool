@@ -21,8 +21,12 @@ Chesstool was created so that users would not have to download a separate progra
 Utilizing Electron's Chromium wrapper, the target website is loaded into a browserwindow. Next, Javascript is injected into the page which provides a bridge between the chessboard and Stockfish. Simultaneously, a node express server is created for Stockfish. Once the server is created and the user starts a game, the Javascript sends eventEmitter requests to and from the Stockfish engine, which results in the board being changed. The red color highlights the piece that should be moved while the blue color highlights where the piece should be moved to. This is quite similar to chess.com's own highlight system.
 
 ## What does it look like?
-**All games were played in unrated chess against my [friend](https://github.com/pratikplayer), who just so happens to be a very talented Candidate Master (CM).**
+**All games were played in unrated chess against my [friend](https://github.com/pratikplayer), who just so happens to be a highly talented Candidate Master (CM).**
 ### A. Castling King side
 ![Castling King side](./assets/castle.png)
 ### B. Forking Queen and Rook
 ![Forking Queen and Rook](./assets/fork.png)
+### C. Winning against a titled player
+![Winning against a titled player](./assets/win.png)
+### D. 96.1% accuracy against a titled player
+![Winning against a titled player](./assets/analysis.png)
