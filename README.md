@@ -30,7 +30,7 @@ Chesstool was created so that users would not have to download a separate progra
 Utilizing Electron's Chromium wrapper, the target website is loaded into a browserwindow. Next, Javascript is injected into the page which provides a bridge between the chessboard and Stockfish. Simultaneously, a node express server is created for Stockfish. Once the server is created and the user starts a game, the Javascript sends eventEmitter requests to and from the Stockfish engine, which results in the board being changed. The red color highlights the piece that should be moved while the blue color highlights where the piece should be moved to. This is quite similar to chess.com's own highlight system.
 
 ## What does it look like?
-**All games were played in unrated chess against my [friend](https://github.com/pratikplayer), who just so happens to be a highly talented Candidate Master (CM).**
+**All games were played in unrated chess against my friend [Pratik](https://github.com/pratikplayer), who just so happens to be a highly talented Candidate Master (CM).**
 ### A. Castling King side
 ![Castling King side](./assets/castle.png)
 #### Chesstool will account for awkward moves like Castling, Promoting, and En passant
@@ -43,3 +43,6 @@ Utilizing Electron's Chromium wrapper, the target website is loaded into a brows
 ### D. 96.1% accuracy against a CM
 ![Winning against a titled player](./assets/analysis.png)
 #### As you can see, with the Chesstool rated at 3438 ELO, even a professional player rated at 2229 ELO doesn't stand a chance.
+
+## Reflections
+Special thanks to [Pratik](https://github.com/pratikplayer) for offering to be my Guinea pig for this project. You can find his FIDE profile [here](https://ratings.fide.com/profile/30920450). Also, in case you're reading this Daniel Rensch, I'm open for a job ;).
