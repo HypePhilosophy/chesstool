@@ -24,3 +24,5 @@ Utilizing Electron's Chromium wrapper, the target website is loaded into a brows
 **All games were played in unrated chess against my [friend](https://github.com/pratikplayer), who just so happens to be a very talented Candidate Master (CM).**
 ### A. Castling King side
 ![Castling King side](./assets/castle.png)
+### B. Forking Queen and Rook
+![Forking Queen and Rook](./assets/fork.png)
