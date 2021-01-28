@@ -1,6 +1,9 @@
 # Chesstool
 Chesstool is an opensource desktop chess application that calculates the best possible moves you can make in a game of online chess. Currently, it only supports [chess.com](https://chess.com/); however I will be adding features (i.e. an intuitive UI) and additional sites like [lichess.org](https://lichess.org/) and [chess24.com](https://chess24.com/). It is currently rated at 3438 ELO.
 
+### Chesstool in action
+![](https://media.giphy.com/media/RfWEM0wFboL3y0r1e9/giphy.gif)
+
 ## Disclaimer
 I am in no way responsible for the misuse of this program or advocating for unfair advantages. Using such a program in ranked chess play is unethical and will result in sanctions on your chess account. This project is not meant to aid cheaters but rather a way to educate chess players and to provide detailed in-game analysis. Please use this responsibly. (i.e. both parties must be aware of the tool being used in an unrated game)
 
@@ -26,7 +29,7 @@ Utilizing Electron's Chromium wrapper, the target website is loaded into a brows
 ![Castling King side](./assets/castle.png)
 ### B. Forking Queen and Rook
 ![Forking Queen and Rook](./assets/fork.png)
-### C. Winning against a titled player
+### C. Winning against a CM
 ![Winning against a titled player](./assets/win.png)
-### D. 96.1% accuracy against a titled player
+### D. 96.1% accuracy against a CM
 ![Winning against a titled player](./assets/analysis.png)
