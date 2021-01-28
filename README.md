@@ -22,4 +22,5 @@ Utilizing Electron's Chromium wrapper, the target website is loaded into a brows
 
 ## What does it look like?
 
-1. ![Castling King side](./assets/castle.png)
+### A.
+![Castling King side](./assets/castle.png)
