@@ -33,11 +33,13 @@ Utilizing Electron's Chromium wrapper, the target website is loaded into a brows
 **All games were played in unrated chess against my [friend](https://github.com/pratikplayer), who just so happens to be a highly talented Candidate Master (CM).**
 ### A. Castling King side
 ![Castling King side](./assets/castle.png)
+#### Chesstool will account for awkward moves like castling and En passant
 ### B. Forking Queen and Rook
 ![Forking Queen and Rook](./assets/fork.png)
+#### Chesstool understands the best moves to make. In this case, forking the Queen and Rook pretty much won the game.
 ### C. Winning against a CM
 ![Winning against a titled player](./assets/win.png)
+#### Thanks to Chesstool, I was able to beat an extremely talented chess player - something that I wouldn't have been able to pull off without it.
 ### D. 96.1% accuracy against a CM
 ![Winning against a titled player](./assets/analysis.png)
-
 #### As you can see, with the Chesstool rated at 3438 ELO, even a professional player rated at 2229 ELO doesn't stand a chance.
