@@ -44,5 +44,15 @@ Utilizing Electron's Chromium wrapper, the target website is loaded into a brows
 ![Winning against a titled player](./assets/analysis.png)
 #### As you can see, with the Chesstool rated at 3438 ELO, even a professional player rated at 2229 ELO doesn't stand a chance.
 
+### Game Analysis
+For those who want to analyze the game we played, visit [https://www.chess.com/analysis](https://www.chess.com/analysis) and paste the pgn from below into the Load PGN section.
+
+```
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Bxc6 dxc6 5. d3 Bc5 6. c3 Qe7 7. O-O h6 8. Nbd2
+Bg4 9. h3 Bh5 10. Nc4 O-O-O 11. Ncxe5 Nf6 12. g4 Bg6 13. Nxg6 fxg6 14. e5 Nd5
+15. d4 Ba7 16. c4 Nb6 17. Qe2 Rhf8 18. b3 g5 19. Bb2 Rf4 20. Rad1 h5 21. Bc1
+hxg4 22. Nh4 Rfxd4 23. Nf5 Qc5 24. Nxd4 Rxd4 25. Rxd4 Qxd4 26. Rd1 1-0
+```
+
 ## Reflections
 Special thanks to [Pratik](https://github.com/pratikplayer) for offering to be my Guinea pig for this project. You can find his FIDE profile [here](https://ratings.fide.com/profile/30920450). Also, in case you're reading this Danny Rensch, I'm open for a job ;).
