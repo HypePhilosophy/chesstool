@@ -4,6 +4,12 @@ Chesstool is an opensource desktop chess application that calculates the best po
 ### Chesstool in action
 ![](https://media.giphy.com/media/RfWEM0wFboL3y0r1e9/giphy.gif)
 
+### Features:
+1. Best move calculator
+2. Opponent move prediction
+3. Cheat Detector (In-progress)
+4. Advertisement Removal
+
 ## Disclaimer
 I am in no way responsible for the misuse of this program or advocating for unfair advantages. Using such a program in ranked chess play is unethical and will result in sanctions on your chess account. This project is not meant to aid cheaters but rather a way to educate chess players and to provide detailed in-game analysis. Please use this responsibly. (i.e. both parties must be aware of the tool being used in an unrated game)
 
