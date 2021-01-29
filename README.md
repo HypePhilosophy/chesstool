@@ -27,7 +27,7 @@ Chesstool came about as a fun project to pursue to help me overcome my programmi
 Chesstool was created so that users would not have to download a separate program to play chess on a browser. Instead, this entire application is the browser and tool combined. The Chesstool consists of two parts.
 
 1. [Electron](https://github.com/electron/electron)
-2. Stockfish Chess Engine
+2. [Stockfish Chess Engine](https://github.com/official-stockfish/Stockfish)
 
 Utilizing Electron's Chromium wrapper, the target website is loaded into a browserwindow. Next, Javascript is injected into the page which provides a bridge between the chessboard and Stockfish. Simultaneously, a node express server is created for Stockfish. Once the server is created and the user starts a game, the Javascript sends eventEmitter requests to and from the Stockfish engine, which results in the board being changed. The red color highlights the piece that should be moved while the blue color highlights where the piece should be moved to. This is quite similar to chess.com's own highlight system.
 
