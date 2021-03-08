@@ -20,7 +20,7 @@ Chesstool came about as a fun project to pursue to help me overcome my programmi
 
 ## Setup
 1. Clone the repository
-2. Install the necessary dependencies through yarn
+2. Install the necessary dependencies through npm
 3. Run the command `npm run start`
 
 ## How it works
