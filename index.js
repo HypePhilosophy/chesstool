@@ -1,23 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable default-case */
-/* eslint global-require: off, no-console: off */
-
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `yarn build` or `yarn build-main`, this file is compiled to
- * `./app/main.prod.js` using webpack. This gives us some performance wins.
- */
-// eslint-disable-next-line prettier/prettier
-import path from 'path';
-import { app, BrowserWindow, session } from 'electron';
-import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
-import { ElectronBlocker } from '@cliqz/adblocker-electron';
-import fetch from 'cross-fetch'; // required 'fetch'
-import MenuBuilder from './menu';
+var path = require('path');
+var { app, BrowserWindow, session } = require('electron');
+var { autoUpdater } = require('electron-updater');
+var log = require('electron-log');
+var { ElectronBlocker } = require('@cliqz/adblocker-electron');
+var fetch = require('cross-fetch');
 
 const cors = require('cors');
 const express = require('express');
@@ -25,7 +11,7 @@ const stockfish = require("./scripts/stockfish");
 
 const engine = stockfish();
 
-export default class AppUpdater {
+class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
@@ -33,7 +19,7 @@ export default class AppUpdater {
   }
 }
 
-let mainWindow: BrowserWindow | null = null;
+let mainWindow = null;
 
 ElectronBlocker.fromPrebuiltAdsAndTracking(fetch)
   // eslint-disable-next-line promise/always-return
@@ -99,24 +85,12 @@ const createWindow = async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    // if (process.env.START_MINIMIZED) {
-    //   mainWindow.minimize();
-    // } else {
-    //   mainWindow.show();
-    //   mainWindow.focus();
-    // }
-    // mainWindow.webContents.insertCSS('a{text-decoration:none;color:#232323;transition:color .3s ease}a:hover{color:tomato}#menuToggle{display:block;position:absolute;top:50px;right:50px;z-index:1;-webkit-user-select:none;user-select:none}#menuToggle input{display:block;width:40px;height:32px;position:absolute;top:-7px;left:-5px;cursor:pointer;opacity:0;z-index:2;-webkit-touch-callout:none}#menuToggle span{display:block;width:33px;height:4px;margin-bottom:5px;position:relative;background:#cdcdcd;border-radius:3px;z-index:1;transform-origin:4px 0;transition:transform .5s cubic-bezier(.77,.2,.05,1),background .5s cubic-bezier(.77,.2,.05,1),opacity .55s ease}#menuToggle span:first-child{transform-origin:0 0}#menuToggle span:nth-last-child(2){transform-origin:0 100%}#menuToggle input:checked~span{opacity:1;transform:rotate(45deg) translate(-2px,-1px);background:#232323}#menuToggle input:checked~span:nth-last-child(3){opacity:0;transform:rotate(0) scale(.2,.2)}#menuToggle input:checked~span:nth-last-child(2){opacity:1;transform:rotate(-45deg) translate(0,-1px)}#menu{position:absolute;width:300px;margin:-100px 0 0 0;padding:50px;padding-top:125px;right:-100px;background:#ededed;list-style-type:none;-webkit-font-smoothing:antialiased;transform-origin:0 0;transform:translate(100%,0);transition:transform .5s cubic-bezier(.77,.2,.05,1)}#menu li{padding:10px 0;font-size:22px}#menuToggle input:checked~ul{transform:scale(1,1);opacity:1}')
   });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
   new AppUpdater();
 };
 
@@ -146,13 +120,13 @@ expressApp.listen(3000);
 expressApp.use(express.urlencoded());
 expressApp.use(cors({credentials: true, origin: 'https://www.chess.com'}));
 
-let previousResponse: string;
+let previousResponse;
 let firstMove = true;
 
-expressApp.get('/stockfish', (req: any, res: any) => {
+expressApp.get('/stockfish', (req, res) => {
   const uciMessage = decodeURIComponent(req.query.uci);  
 
-  function send(str: string)
+  function send(str)
   {
       console.log(`Sending: ${str}`)
       engine.postMessage(str);
@@ -168,7 +142,7 @@ expressApp.get('/stockfish', (req: any, res: any) => {
       process.exit();
   }
 
-  engine.onmessage = function(line: string){
+  engine.onmessage = function(line){
     console.log(`Line: ${line}`)
     
     if (typeof line !== "string") {
