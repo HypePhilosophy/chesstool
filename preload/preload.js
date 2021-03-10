@@ -93,7 +93,14 @@ function findTable(method){
       }
     break;
 
-    case "computer": changeFinder('computer');
+    case "computer":
+      if(!side && document.getElementsByClassName(gameArray[0].computer.tableId)[0] != undefined){
+        getSide();
+      }
+      if(document.getElementsByClassName(gameArray[0].computer.tableId)[0] != undefined){
+        movesToPGN();
+      }
+    break;
   
     default: 
     break;
