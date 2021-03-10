@@ -48,12 +48,9 @@ function controller(){
 }
 
 function changeFinder(method){
-  // eslint-disable-next-line prettier/prettier
     MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
   
     const observer = new MutationObserver(function(mutations, observer) {
-      // console.log(mutations[0].target)
-      // console.log('is the game over?' + !isGameOver())
 
       // * Removed ads and reset the margin to the right
       var adDocument = document.getElementById('board-layout-ad');
