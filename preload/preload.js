@@ -37,6 +37,8 @@ function controller(){
       switch(urlArray[i]) {
         case "live": changeFinder('live');
         break;
+
+        case "computer": changeFinder('computer');
   
         default: break;
       }
@@ -62,7 +64,7 @@ function changeFinder(method){
       if(mutations[0].target.innerHTML.includes('pieces') && !mutations[0].target.innerHTML.includes('vertical-move-list-notation-vertical')){
         // console.log(mutations[0].target.innerHTML)
         // console.log('change detected')
-        setTimeout(findTable, 50)
+        setTimeout(findTable(method), 50)
       }
         // } else if(mutations[0].target.innerHTML.includes('vertical-move-list-notation-vertical') && !isGameOver()) {
         //   console.log('piece move')
@@ -79,12 +81,22 @@ function changeFinder(method){
     });
   }
 
-function findTable(){
-  if(!side && document.getElementsByClassName('vertical-move-list-component')[0] != undefined){
-    getSide();
-  }
-  if(document.getElementsByClassName('vertical-move-list-component')[0] != undefined){
-    movesToPGN();
+function findTable(method){
+
+  switch(method) {
+    case "live": 
+      if(!side && document.getElementsByClassName(gameArray[0].live.tableId)[0] != undefined){
+        getSide();
+      }
+      if(document.getElementsByClassName(gameArray[0].live.tableId)[0] != undefined){
+        movesToPGN();
+      }
+    break;
+
+    case "computer": changeFinder('computer');
+  
+    default: 
+    break;
   }
 }
 
