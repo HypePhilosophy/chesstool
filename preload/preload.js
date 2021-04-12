@@ -17,7 +17,7 @@ let gameArray = [
   }
 ]
 
-document.addEventListener("DOMContentLoaded", controller());
+document.addEventListener("DOMContentLoaded", setTimeout(controller, 2000));
 
 // * Init game for stockfish engine
 async function startGame(){
@@ -39,7 +39,8 @@ function controller(){
         break;
 
         case "computer": changeFinder('computer');
-  
+        break;
+
         default: break;
       }
       found = true;
