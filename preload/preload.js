@@ -1,4 +1,3 @@
-let currentNum = 0;
 let previousFEN = '';
 let side = false;
 let fenCount = 0;
@@ -37,7 +36,6 @@ async function startGame(){
 
 // * looks for the method to use based on url
 function controller(){
-  console.log("controller")
   let found = false;
   const urlArray = ["play", "live","computer","puzzles/rush","puzzles/rated","puzzles/battle"];
   for(var i = 0; i < urlArray.length; i++){
@@ -56,8 +54,6 @@ function controller(){
       found = true;
     }
   }
-  // Remove ads
-  
 }
 
 function changeFinder(method){
@@ -72,7 +68,9 @@ function changeFinder(method){
         var body = document.getElementsByTagName('body');
         body[0].style = 'margin-right: 15px !important;';
       }
-      if(mutations[0].target.innerHTML.includes('pieces') && !mutations[0].target.innerHTML.includes('vertical-move-list-notation-vertical')){
+
+      // * Detects when the table is changed
+      if(mutations[0].target.innerHTML.includes('class="move"')){
         // console.log(mutations[0].target.innerHTML)
         console.log('change detected')
         setTimeout(findTable(method), 50)
@@ -92,11 +90,9 @@ function findTable(method){
 
   switch(method) {
     case "live": 
-    console.log('live')
       if(!side && document.getElementsByClassName(gameArray[0].live.tableId)[0] != undefined){
         getSide();
-      }
-      if(document.getElementsByClassName(gameArray[0].live.tableId)[0] != undefined){
+      } else if(document.getElementsByClassName(gameArray[0].live.tableId)[0] != undefined){
         movesToPGN();
       }
     break;
@@ -116,44 +112,55 @@ function findTable(method){
 }
 
 async function getSide(){
-  // document.getElementsByClassName('evaluation-bar-bar evaluation-bar-flipped')[0] !== undefined
+  // Checks child to see if top coordinate is 1 or 8. If 1, then black is on top
     if(document.querySelector("#board-single > svg.coordinates > text:nth-child(1)").innerHTML == '1'){
       side = 'black';
     } else {
       side = 'white';
       // Default White FEN starting position
-      setTimeout(() => {
+      await setTimeout(() => {
         uciCmd(`position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1`);
       }, 1000);
     }
     console.log(`side ${side}`)
+    await movesToPGN();
   }
 
 async function movesToPGN(){
   const moveElement = document.getElementsByClassName('node');
-  // const moveElement = document.querySelectorAll("div[class*='node']")
   const numberOfMoves = moveElement.length;
   let numberOfRows = 1;
   let pgn = "";
-  if(currentNum !== numberOfMoves){
-    currentNum++;
-  }
 
   for(let x = 0; x < numberOfMoves; x++){
     let ending = '*';
+
+    // * Checks if the move is odd or even which determines if it is white or black
     if(!isOdd(x) || (x === 0)){
       pgn = pgn.replace('*', '');
       if(moveElement[x].innerText.includes('-') && !moveElement[x].innerText.includes('O-O')){
         ending = '';
       }
-      pgn = pgn.concat(`${numberOfRows}.${moveElement[x].innerText} ${ending}`);
+
+      pgn = pgn.concat(`${numberOfRows}.`);
+
+      if (moveElement[x].getElementsByTagName('span')[0]){
+        pgn = pgn.concat(moveElement[x].getElementsByTagName('span')[0].getAttribute("data-figurine"))
+      }
+      pgn = pgn.concat(`${moveElement[x].innerText} ${ending}`);
       numberOfRows++;
+
     } else {
       pgn = pgn.replace('*', '');
       if(moveElement[x].innerText.includes('-') && !moveElement[x].innerText.includes('O-O')){
         ending = '';
       }
+
+      if (moveElement[x].getElementsByTagName('span')[0]){
+        pgn = pgn.concat(moveElement[x].getElementsByTagName('span')[0].getAttribute("data-figurine"))
+      }
       pgn = pgn.concat(`${moveElement[x].innerText} ${ending}`);
+
     }
 
     if(x == numberOfMoves-1){
@@ -181,19 +188,32 @@ async function PGNtoFEN(pgn){
 
   // double checking everything
   fens.forEach(function(i, idx, array){
-    console.log("FEN: " + i);
-    if (idx === array.length - 1 && previousFEN !== i){
+    if (idx === array.length - 1){
       fenCount++;
       console.log(side)
       console.log(fenCount)
 
-      if(side === 'white'){// !isOdd(fenCount)
+
+      if(side == 'white' && isWhiteTurn(i)){// !isOdd(fenCount)
         sendFEN(i);
-      } else if(side === 'black'){// isOdd(fenCount)
+      } else if(side == 'black' && isBlackTurn(i)){// isOdd(fenCount)
         sendFEN(i);
+      } else {
+        console.log('not your turn')
+        console.log(i)
       }
     }
  });
+}
+
+function isWhiteTurn(fen) {
+  var fenArray = fen.split(" ");
+  return fenArray[1] === "w";
+}
+
+function isBlackTurn(fen) {
+  var fenArray = fen.split(" ");
+  return fenArray[1] === "b";
 }
 
 function isOdd(i){
@@ -297,7 +317,6 @@ function markBoard(bestMove){
 // Create the square highlight element
 function createHighlight(coordinates, color){
   let element = document.createElement("div");
-  // element.id = `square-${squareCount}`;
   element.className = `highlight square-${coordinates} chesstool-delete`;
   element.style = `background-color: ${color} opacity: 0.9;`;
   element.setAttribute('data-test-element', 'highlight');

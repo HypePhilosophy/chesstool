@@ -151,7 +151,7 @@ expressApp.get('/stockfish', (req, res) => {
         console.log(line);
     }
   
-    if(line.includes('bestmove') && previousResponse !== line || line.includes('bestmove') && firstMove){
+    if(line.includes('bestmove') || line.includes('bestmove') && firstMove){
       previousResponse = line;
       res.end(line);
     }
