@@ -6,7 +6,7 @@ let squareCount = 200;
 let gameArray = [
   {
     live: {
-      tableId: "vertical-move-list-component",
+      tableId: "move-list-move-list",
       sideId: "board-player-default-white"
     },
     computer: {
@@ -17,7 +17,16 @@ let gameArray = [
   }
 ]
 
-document.addEventListener("DOMContentLoaded", setTimeout(controller, 2000));
+document.addEventListener("DOMContentLoaded", function() {setTimeout(controller, 2000)});
+
+// Removes highlighted squares
+document.addEventListener('mouseup', function() {
+  const elementsToDelete = document.querySelectorAll('.chesstool-delete');
+  elementsToDelete.forEach(element => {
+    element.parentNode.removeChild(element);
+  });
+
+});
 
 // * Init game for stockfish engine
 async function startGame(){
@@ -28,8 +37,9 @@ async function startGame(){
 
 // * looks for the method to use based on url
 function controller(){
+  console.log("controller")
   let found = false;
-  const urlArray = ["live","computer","puzzles/rush","puzzles/rated","puzzles/battle"];
+  const urlArray = ["play", "live","computer","puzzles/rush","puzzles/rated","puzzles/battle"];
   for(var i = 0; i < urlArray.length; i++){
     if(window.location.href.includes(urlArray[i]) && !found){
       startGame();
@@ -64,14 +74,10 @@ function changeFinder(method){
       }
       if(mutations[0].target.innerHTML.includes('pieces') && !mutations[0].target.innerHTML.includes('vertical-move-list-notation-vertical')){
         // console.log(mutations[0].target.innerHTML)
-        // console.log('change detected')
+        console.log('change detected')
         setTimeout(findTable(method), 50)
       }
-        // } else if(mutations[0].target.innerHTML.includes('vertical-move-list-notation-vertical') && !isGameOver()) {
-        //   console.log('piece move')
-        // } else if(!isGameOver()){
-        //   console.log(mutations[0].target.innerHTML)
-        // }
+
     });
     // define what element should be observed by the observer
     // and what types of mutations trigger the callback
@@ -86,6 +92,7 @@ function findTable(method){
 
   switch(method) {
     case "live": 
+    console.log('live')
       if(!side && document.getElementsByClassName(gameArray[0].live.tableId)[0] != undefined){
         getSide();
       }
@@ -110,8 +117,7 @@ function findTable(method){
 
 async function getSide(){
   // document.getElementsByClassName('evaluation-bar-bar evaluation-bar-flipped')[0] !== undefined
-    console.log('getside')
-    if(document.getElementsByClassName('board-player-default-component board-player-default-top board-player-default-white undefined')[0] !== undefined){
+    if(document.querySelector("#board-single > svg.coordinates > text:nth-child(1)").innerHTML == '1'){
       side = 'black';
     } else {
       side = 'white';
@@ -124,11 +130,10 @@ async function getSide(){
   }
 
 async function movesToPGN(){
-  const moveElement = document.getElementsByClassName('move-text-component vertical-move-list-clickable');
+  const moveElement = document.getElementsByClassName('node');
   // const moveElement = document.querySelectorAll("div[class*='node']")
   const numberOfMoves = moveElement.length;
   let numberOfRows = 1;
-  // eslint-disable-next-line prefer-const
   let pgn = "";
   if(currentNum !== numberOfMoves){
     currentNum++;
@@ -159,6 +164,7 @@ async function movesToPGN(){
 }
 
 async function PGNtoFEN(pgn){
+  console.log('pgn to fen')
   const {Chess} = require('chess.js');
   const chess1 = new Chess();
   const chess2 = new Chess();
@@ -175,6 +181,7 @@ async function PGNtoFEN(pgn){
 
   // double checking everything
   fens.forEach(function(i, idx, array){
+    console.log("FEN: " + i);
     if (idx === array.length - 1 && previousFEN !== i){
       fenCount++;
       console.log(side)
@@ -281,8 +288,8 @@ function markBoard(bestMove){
   let futureMove = '';
   // Algebraic notation to board
   console.log(array)
-  currentMove = currentMove.concat(0,getPosition(array[0][0]),0,array[0][1]);
-  futureMove = futureMove.concat(0,getPosition(array[1][0]),0,array[1][1]);
+  currentMove = currentMove.concat(getPosition(array[0][0]),array[0][1]);
+  futureMove = futureMove.concat(getPosition(array[1][0]),array[1][1]);
   createHighlight(currentMove, 'rgb(244, 42, 50);')
   createHighlight(futureMove, '#0000FF;');
 }
@@ -290,10 +297,11 @@ function markBoard(bestMove){
 // Create the square highlight element
 function createHighlight(coordinates, color){
   let element = document.createElement("div");
-  element.id = `square-${squareCount}`;
-  element.className = `square square-${coordinates} marked-square`;
+  // element.id = `square-${squareCount}`;
+  element.className = `highlight square-${coordinates} chesstool-delete`;
   element.style = `background-color: ${color} opacity: 0.9;`;
+  element.setAttribute('data-test-element', 'highlight');
   squareCount++;
-  document.getElementById('game-board').appendChild(element);
+  document.getElementById('board-single').prepend(element);
 }
 
