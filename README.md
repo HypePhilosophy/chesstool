@@ -23,6 +23,8 @@ Chesstool came about as a fun project to pursue to help me overcome my programmi
 2. Install the necessary dependencies through npm
 3. Run the command `npm run start`
 
+(Note: If you get an error saying electron not found, run `npm install electron`
+
 ## How it works
 Chesstool was created so that users would not have to download a separate program to play chess on a browser. Instead, this entire application is the browser and tool combined. The Chesstool consists of two parts.
 
